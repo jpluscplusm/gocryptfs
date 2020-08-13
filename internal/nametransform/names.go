@@ -27,6 +27,7 @@ type NameTransformer interface {
 	WriteLongNameAt(dirfd int, hashName string, plainName string) error
 	B64EncodeToString(src []byte) string
 	B64DecodeString(s string) ([]byte, error)
+	BadName(name string) bool
 }
 
 // NameTransform is used to transform filenames.
@@ -51,6 +52,16 @@ func New(e *eme.EMECipher, longNames bool, raw64 bool) *NameTransform {
 		longNames: longNames,
 		B64:       b64,
 	}
+}
+
+func (n *NameTransform) BadName(name string) bool {
+	for _, pattern := range n.BadnamePatterns {
+		match, err := filepath.Match(pattern, name)
+		if err == nil && match { // Pattern should have been validated already
+			return true
+		}
+	}
+	return false
 }
 
 // DecryptName calls decryptName to try and decrypt a base64-encoded encrypted

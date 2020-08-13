@@ -686,7 +686,8 @@ func (fs *FS) isFiltered(path string) bool {
 			configfile.ConfDefaultName)
 		return true
 	}
+
 	// Note: gocryptfs.diriv is NOT forbidden because diriv and plaintextnames
 	// are exclusive
-	return false
+	return fs.nameTransform.BadName(path)
 }

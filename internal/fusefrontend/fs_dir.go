@@ -301,7 +301,9 @@ func (fs *FS) OpenDir(dirName string, context *fuse.Context) ([]fuse.DirEntry, f
 			continue
 		}
 		if fs.args.PlaintextNames {
-			plain = append(plain, cipherEntries[i])
+			if !fs.nameTransform.BadName(cName) {
+				plain = append(plain, cipherEntries[i])
+			}
 			continue
 		}
 		if cName == nametransform.DirIVFilename {
